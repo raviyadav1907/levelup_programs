@@ -1,3 +1,4 @@
+//1st may lecture;
 import java.util.Scanner;
 
 class lec01{

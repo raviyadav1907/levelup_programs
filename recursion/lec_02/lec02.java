@@ -1,3 +1,4 @@
+//2nd may lecture;
 //import java.util.*;
 
 class lec02{
