@@ -14,8 +14,8 @@ class lec05{
     }
     
     public static void NQueens_problem() {
-        boolean[][] rooms=new boolean[4][4];
-        int tnq = 4;
+        // boolean[][] rooms=new boolean[4][4];
+        // int tnq = 4;
 
         //System.out.println(NQueens(rooms, 0, tnq, ""));
         //System.out.println(NQueen_Permutation(rooms,0, tnq, ""));
