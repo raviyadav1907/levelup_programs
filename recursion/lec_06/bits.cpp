@@ -26,7 +26,7 @@ using namespace std;
         return (num ^ mask);
 }
 
-int countAllSetBits_02(unsigned_int num)
+int countAllSetBits_02(int num)
 {
     int count = 0;
     while (num != 0)
