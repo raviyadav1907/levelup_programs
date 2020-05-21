@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+
+import javax.security.auth.kerberos.KerberosKey;
 class binary_tree{
 
     // node for tree 
@@ -167,11 +169,118 @@ class binary_tree{
 
         for(int i = 0 ; i<path.size() ; i++){
             if(k-i<0)break;
-            kdown(path.get(i), k-1, blocknode);
+            kdown(path.get(i), k-i, blocknode);
             blocknode=path.get(i);
         }
     }
 
+    public static int allNodeAway_02(Node root,int target,int k){
+        if(root==null)return -1;
+        if(root.data == target){
+            kdown(root,k, null);
+            return 1;
+        }
+        int leftdistance=allNodeAway_02(root.left, target, k);
+        if(leftdistance!=-1){
+            if(k-leftdistance>=0) kdown(root, k-leftdistance, root.left);
+            return leftdistance+1;
+        }
+        int rightdistance=allNodeAway_02(root.right, target, k);
+        if(rightdistance!=-1){
+            if(k-rightdistance>=0) kdown(root,k-rightdistance, root.right);
+            return rightdistance+1;
+        }
+        return -1;
+    }
+
+    public static void kDown_1(Node root,int level){
+        if(root==null) return;
+ 
+        if(level==0){
+          System.out.print(root.data + " ");
+          return;  
+        }
+ 
+        kDown_1(root.left,level-1);
+        kDown_1(root.right,level-1);
+ 
+     }
+
+    public static int allNodeAway_03(Node root,int target,int k){
+        if(root==null) return -1;
+        if(root.data==target){
+            kdown(root, k, null);
+            return 1;
+        }
+        int leftdistance = allNodeAway_03(root.left, target, k);
+        if(leftdistance!=-1){
+            if(k-leftdistance == 0)
+                System.out.print(root.data+" ");
+            else
+                kdown_1(root.right, k-leftdistance-1);
+            return leftdistance+1;
+        }
+        int rightdistance = allNodeAway_03(root.right, target, k);
+        if(rightdistance!=-1){
+            if(rightdistance == 0){
+                System.out.print(root.data+" ");
+            }else{
+                kdown_1(root.left, k-rightdistance-1);
+            return rightdistance+1;
+            }
+        }
+        return -1;
+    }
+    
+    // diameter of a tree =======================
+    // copy tree height from tree basic=========================
+
+    public static int diameter_01(Node node){
+        if(node==null) return 0;
+ 
+        int ld=diameter_01(node.left);
+        int rd=diameter_01(node.right);
+ 
+        int lh=height(node.left);
+        int rh=height(node.right);
+ 
+        int myDia = lh + rh + 2;
+        return Math.max(Math.max(ld,rd), myDia);
+    }
+
+    public static class diaPair{
+        int dia=0;
+        int hei=0;
+ 
+        diaPair(int dia,int hei){
+            this.dia=dia;
+            this.hei=hei;
+        }
+    }
+ 
+    public static diaPair diameter_02(Node node){
+     if(node==null) return new diaPair(0,-1) ;
+ 
+     diaPair lr=diameter_02(node.left);  // left result
+     diaPair rr=diameter_02(node.right); // right result
+ 
+     diaPair myRes=new diaPair(0,-1);
+     myRes.dia = Math.max(Math.max(lr.dia,rr.dia), (lr.hei+rr.hei+2));
+     myRes.hei = Math.max(lr.hei,rr.hei)+1;
+     
+     return myRes;
+    }
+ 
+    static int diameter=0;
+    public static int diameter_03(Node node){
+        if(node==null) return -1 ;
+    
+        int lh = diameter_03(node.left); // left height
+        int rh =diameter_03(node.right); // right height
+        
+        diameter=Math.max(diameter,lh+rh+2);
+        return Math.max(lh,rh)+1;
+    }
 
     public static void set1_tree(){
         int[] arr = {10,20,40,-1,-1,50,80,-1,-1,90,-1,-1,30,60,100,-1,-1,-1,70,110,-1,-1,120,-1,-1};
