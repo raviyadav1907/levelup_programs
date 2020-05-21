@@ -164,30 +164,62 @@ class lec01{
         return res;
     }
 
-    public static ArrayList<node> root_to_node_path_ArrayList(node root,int data){
+
+    public static ArraLits<Node> rootToNodePath_02(Node root,int data){
+        
         if(root==null){
             return new ArrayList<>();
         }
-
-        if(root.data==data){
-           ArrayList<node> base = new ArrayList<>();
-           base.add(root);
-           return base; 
-        }
         
-        ArrayList<node> left = root_to_node_path_ArrayList(root.left, data);
+        if(root.data==data){
+            ArrayList<Node> base=new ArrayList<>();
+            base.add(root);
+            return base;
+        }
+  
+        ArrayList<Node> left=root_to_node_path(root.left,data,path);
         if(left.size()!=0){
             left.add(root);
             return left;
         }
-
-        ArrayList<node> right = root_to_node_path_ArrayList(root.right, data);
+   
+        ArrayList<Node> right=root_to_node_path(root.right,data,path);
         if(right.size()!=0){
             right.add(root);
             return right;
         }
-
+        
         return new ArrayList<>();
+      }
+
+    public static void rootToNodePath(Node root,int data){
+        ArrayList<Node> path=new ArrayList<>();
+        root_to_node_path(root,data,path);
+        for(Node n: path){
+            System.out.print(n.data + " -> ");
+        }
+    }
+
+    public Node lowestCommonAncestor(Node root, int p, int q) {
+        ArrayList<Node> path1=new ArrayList<>();
+        ArrayList<Node> path2=new ArrayList<>();
+        
+        root_to_node_path(root,p,path1);
+        root_to_node_path(root,q,path2);
+
+        Node prev=null;
+        int i=path1.size()-1;
+        int j=path2.size()-1;
+        
+        while(i>=0 && j>=0){
+          if(path1.get(i).data!=path2.get(j).data) break;
+          
+          prev=path1.get(i);
+          i--;
+          j--;
+        }
+
+        return prev;
     }
 
     public static void root_to_node_path_sol(){
