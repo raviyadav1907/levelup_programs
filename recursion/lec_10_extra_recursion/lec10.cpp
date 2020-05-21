@@ -51,18 +51,18 @@ int numTilePossibilities(string &str)
 //         generateParenthesis("",0,0,n);
 //         return res;
 //     }
-//
+
 //     public void generateParenthesis(String ans,int OB,int CB,int n){
 //         if(OB+CB==2*n) {
 //             res.add(ans);
 //             return;
 //         }
-//
+
 //         if(OB<n)
 //           generateParenthesis(ans+"(", OB+1,CB,n);
 //         if(CB<OB)
 //           generateParenthesis(ans+")", OB,CB+1,n);
-//
+
 //     }
 
 int board[13][5] = {0};

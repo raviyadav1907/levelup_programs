@@ -1,0 +1,3 @@
+true
+90->50->20->10->
+[lec01$node@15db9742, lec01$node@6d06d69c, lec01$node@7852e922, lec01$node@4e25154f]
