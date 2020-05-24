@@ -290,6 +290,10 @@ class binary_tree{
         System.out.println("LCAnode : " + LCAnode.data);
     }
 
+    //set2_tree=================================================================
+
+    
+
     public static void main(String[] args){
         set1_tree();
     }
