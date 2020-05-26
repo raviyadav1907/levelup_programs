@@ -1,6 +1,8 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
 
-import javax.security.auth.kerberos.KerberosKey;
+import javax.swing.plaf.basic.BasicTreeUI.NodeDimensionsHandler;
+
 class binary_tree{
 
     // node for tree 
@@ -46,6 +48,11 @@ class binary_tree{
         System.out.println(str);
         display_tree(root.left);
         display_tree(root.right);
+    }
+
+    public static int height(Node root){
+        if(root==null) return -1;
+        return Math.max(height(root.left),height(root.left))+1;
     }
 
     // rootToNodePath==========================================================================================
@@ -217,7 +224,7 @@ class binary_tree{
             if(k-leftdistance == 0)
                 System.out.print(root.data+" ");
             else
-                kdown_1(root.right, k-leftdistance-1);
+                kDown_1(root.right, k-leftdistance-1);
             return leftdistance+1;
         }
         int rightdistance = allNodeAway_03(root.right, target, k);
@@ -225,7 +232,7 @@ class binary_tree{
             if(rightdistance == 0){
                 System.out.print(root.data+" ");
             }else{
-                kdown_1(root.left, k-rightdistance-1);
+                kDown_1(root.left, k-rightdistance-1);
             return rightdistance+1;
             }
         }
@@ -292,10 +299,210 @@ class binary_tree{
 
     //set2_tree=================================================================
 
+    public static void levelOrder_00(Node node){
+        LinkedList<Node> pQue = new LinkedList<>(); // addLast and removeFirst.
+        pQue.addLast(node);
+
+        while(pQue.size()!=0){
+            Node rnode = pQue.removeFirst();
+            System.out.print(rnode.data+" ");
+            if(rnode.left!=null)pQue.addLast(rnode.left);
+            if(rnode.right!=null)pQue.addLast(rnode.right);
+        }
+
+    }
+
+    public static void levelOrder_01(Node node){
+        LinkedList<Node> pQue = new LinkedList<>(); // addLast and removeFirst.
+        LinkedList<Node> cQue = new LinkedList<>(); // addLast and removeFirst.   
+
+        pQue.addLast(node);
+        int count=0;
+        System.out.print("Level : "+count+" ->");
+
+        while(pQue.size()!=0){
+            Node rnode = pQue.removeFirst();
+            System.out.print(rnode.data+" ");
+            if(rnode.left!=null) cQue.addLast(rnode.left);
+            if(rnode.right!=null) cQue.addLast(rnode.right);
+
+            if(pQue.size()==0){
+                LinkedList<Node> temp = pQue;
+                pQue=cQue;
+                cQue=temp;
+                count++;
+                System.out.println("\nLevel : "+count+" ->");
+            }
+        }
+    }
+
+    public static void levelOrder_02(Node node){
+        LinkedList<Node> Que = new LinkedList<>(); // addLast and removeFirst.     
+        Que.addLast(node);
+        Que.addLast(null);
+        int count=0;
+        System.out.print("Level : "+count+" ->");
+        while(Que.size()!=0){
+            Node rnode = Que.removeFirst();
+            System.out.print(rnode.data+" ");
+            if(rnode.left!=null) Que.addLast(rnode.left);
+            if(rnode.right!=null) Que.addLast(rnode.right);
+
+            if(Que.size()==0){
+                Que.removeFirst();
+                Que.addLast(null);
+                count++;
+                System.out.println("\nLevel : "+count+" ->");
+            }
+        }
+    }
+
+    public static void levelOrder_03(Node node){
+        LinkedList<Node> pQue=new LinkedList<>(); // addLast and removeFirst.
+        pQue.addLast(node);
+        
+        int count=0;
+        while(pQue.size()!=0){
+            System.out.print("Level: " + count + " -> ");
+            count++;
+            int size=pQue.size();
+    
+            while(size--> 0){
+                Node rnode=pQue.removeFirst();
+                System.out.print(rnode.data+ " ");
+                if(rnode.left!=null) pQue.addLast(rnode.left);
+                if(rnode.right!=null) pQue.addLast(rnode.right);    
+            }
+            System.out.println();
+        }    
+    }
+
+    public static void leftView(Node node){
+        LinkedList<Node> que=new LinkedList<>(); // addLast and removeFirst.
+        que.addLast(node);
+        while(que.size()!=0){
+            int size=que.size();
+            System.out.print(que.getFirst().data + " ");
+            while(size--> 0){
+                Node rnode=que.removeFirst();
+                if(rnode.left!=null) que.addLast(rnode.left);
+                if(rnode.right!=null) que.addLast(rnode.right);    
+            }
+        }
+        System.out.println();
+    } 
+
+    public static void rightView(Node node){
+        LinkedList<Node> que=new LinkedList<>(); // addLast and removeFirst.
+        que.addLast(node);
+        while(que.size()!=0){
+            int size=que.size();
+            Node prev=null;
+            while(size--> 0){
+                Node rnode=que.removeFirst();
+                if(rnode.left!=null) que.addLast(rnode.left);
+                if(rnode.right!=null) que.addLast(rnode.right);    
+                prev=rnode;
+            }
+            System.out.print(prev.data + " ");
+        }
+        System.out.println();
+    }
+       static int leftMinValue=0;
+       static int rightMaxValue=0;
+    
+       public static void width(Node node,int lev){
+           if(node==null) return;
+    
+           leftMinValue=Math.min(leftMinValue,lev);
+           rightMaxValue=Math.max(rightMaxValue,lev);
+           
+           width(node.left, lev - 1);
+           width(node.right, lev + 1);
+       } 
+    
+       public static class pairVO{
+           Node node;  //actual Node
+           int vl=0;  // vertical Level
+           public pairVO(Node node,int vl){
+               this.node=node;
+               this.vl=vl;
+           }
+       }
+    
+       public static void verticalOrder(Node node){
+           width(node,0);
+           int n=rightMaxValue - leftMinValue + 1;
+           ArrayList<ArrayList<Integer>> ans=new ArrayList<>(); // vector<vector<int>> (n,vector<int>());
+           for(int i=0;i<n;i++)
+             ans.add(new ArrayList<>());
+          
+    
+           LinkedList<pairVO> que=new LinkedList<>();
+           que.addLast(new pairVO(node,-leftMinValue));
+    
+           while(que.size()!=0){
+               int size=que.size();
+               while(size--> 0){
+                   pairVO rpair=que.removeFirst();
+                   ans.get(rpair.vl).add(rpair.node.data);
+                   if(rpair.node.left!=null) que.addLast(new pairVO(rpair.node.left, rpair.vl - 1));
+                   if(rpair.node.right!=null) que.addLast(new pairVO(rpair.node.right,rpair.vl + 1));    
+               }
+           }
+    
+           for(ArrayList<Integer> ar: ans)
+              System.out.println(ar);
+           System.out.println();
+       }
+    
+       public static void verticalOrderSum(Node node){
+        width(node,0);
+        int[] ans=new int[rightMaxValue - leftMinValue + 1];
+    
+        LinkedList<pairVO> que=new LinkedList<>();
+        que.addLast(new pairVO(node,-leftMinValue));
+    
+        while(que.size()!=0){
+            int size=que.size();
+            while(size--> 0){
+                pairVO rpair=que.removeFirst();
+                ans[rpair.vl] += rpair.node.data;
+                if(rpair.node.left!=null) que.addLast(new pairVO(rpair.node.left, rpair.vl - 1));
+                if(rpair.node.right!=null) que.addLast(new pairVO(rpair.node.right,rpair.vl + 1));    
+            }
+        }
+    
+        for(ArrayList<Integer> ar: ans)
+           System.out.println(ar);
+        System.out.println();
+    }
+
+    public static void view(Node node){
+        leftView(node);
+        rightView(node);
+        verticalOrder(node);
+    }
     
 
+    public static void levelOrder(Node node){
+        // levelOrder_00(node);
+        // levelOrder_01(node);
+        // levelOrder_02(node);
+        //levelOrder_03(node);    
+    }
+
+    public static void set2_tree(){
+        int[] arr={10,20,40,-1,-1,50,80,-1,-1,90,-1,-1,30,60,100,-1,-1,-1,70,110,-1,-1,120,-1,-1};
+        Node root=construct_Tree(arr);
+        display_tree(root);
+        levelOrder(root);
+        view(root);    
+    }
+
     public static void main(String[] args){
-        set1_tree();
+        //set1_tree();
+        set2_tree();
     }
 
 }
