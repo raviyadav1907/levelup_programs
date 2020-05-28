@@ -54,7 +54,7 @@ void display(Node *node)
 
 int height(Node* node){
     if(node==nullptr) return -1;
-    return max(height(node->left),height(node->right));
+    return max(height(node->left),height(node->right)) + 1;
 }
 
 int size(Node* node){
@@ -73,6 +73,19 @@ bool find(Node* node, int data){
             curr = curr->right;
     }
     return false;
+}
+
+bool findRec(Node *node, int data) // logn
+{
+    if (node == nullptr)
+        return false;
+
+    if (node->data == data)
+        return true;
+    else if (node->data < data)
+        return findRec(node->right, data);
+    else
+        return findRec(node->left, data);
 }
 
 int max_of_tree(Node* node){
@@ -106,6 +119,35 @@ Node* lowestCommonAncestor(Node* node, int p, int q) {
         }
     }
     return nullptr;
+}
+
+int LCAoFBST_Rec(Node *node, int a, int b) // a<b recursive
+{
+    if (node == nullptr)
+        return -1;
+
+    if (b < node->data && a < node->data)
+        return LCAoFBST_Rec(node->left, a, b);
+    else if (a > node->data && b > node->data)
+        return LCAoFBST_Rec(node->right, a, b);
+    else
+        return node->data; //LCA point.
+}
+
+int LCAoFBST(Node *node, int a, int b) // a<b iterative
+{
+    Node *curr = node;
+    while (curr != nullptr)
+    {
+        if (b < curr->data && a < curr->data)
+            curr = curr->left;
+        else if (a > curr->data && b > curr->data)
+            curr = curr->right;
+        else
+            return find(curr, a) && find(curr, b) ? curr->data : -1; //LCA point.
+    }
+
+    return -1;
 }
 
 // in-order
