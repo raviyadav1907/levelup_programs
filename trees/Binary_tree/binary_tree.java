@@ -585,6 +585,59 @@ class binary_tree{
         System.out.println();
     }
 
+    static Node DLLhead=null;
+    static Node DLLprev=null;
+
+    public static void DLL(Node node){
+        if(node==null) return;
+        
+        DLL(node.left);
+        
+        if(DLLhead==null){
+            DLLhead=node;
+        }else{
+            DLLprev.right=node;
+            node.left=DLLprev;
+        }
+        DLLprev=node;
+
+        DLL(node.right);
+        
+    }
+
+    public static class allSolution{
+        int height = 0;
+        int size=0;
+        boolean find=false;
+ 
+        Node pred=null;
+        Node succ=null;
+        Node prev=null;
+    }
+ 
+    public static void allSol(Node node,int data,int level,allSolution pair){
+     if(node==null) return;
+     pair.size++;
+     pair.height=Math.max(pair.height,level);
+     pair.find= pair.find || node.data==data;
+     
+     if(node.data==data && pair.pred==null) pair.pred=prev;
+     if(pair.prev!=null && pair.prev.data == data && pair.succ==null) pair.succ=node;
+     pair.prev=node;
+     
+      allSol(node.left,data,level+1,pair);
+      allSol(node.right,data,level+1,pair);
+    }
+
+
+    public static void set3(Node node){
+        DLL(node);
+        while(DLLhead!=null){
+            System.out.print(DLLhead.data+ " ");
+            DLLhead=DLLhead.right;
+        }
+    }
+
 
     public static void view(Node node){
         leftView(node);
@@ -610,7 +663,8 @@ class binary_tree{
         Node root=construct_Tree(arr);
         display_tree(root);
         levelOrder(root);
-        view(root);    
+        view(root);  
+        set3(root);  
     }
 
     public static void main(String[] args){
