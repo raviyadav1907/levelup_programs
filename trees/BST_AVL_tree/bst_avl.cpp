@@ -292,7 +292,7 @@ Node *removeData(Node *root, int data)
        if(root->left == nullptr || root->right == nullptr) 
        return root->left!=nullptr?root->left:root->right;
        
-       int maxInleft=maximumEle(root->left);
+       int maxInleft=max_of_tree(root->left);
        root->data=maxInleft;
        root->left=removeData(root->left,maxInleft);
     
