@@ -7,8 +7,8 @@ class Node
 {
 public:
     int data;
-    Node* left = nullptr;  // Node* left=nullptr;
-    Node* right = nullptr; // Node* right=nullptr;
+    Node *left = nullptr;  // Node* left=nullptr;
+    Node *right = nullptr; // Node* right=nullptr;
 
     int height = 0;
     int bal = 0;
@@ -25,6 +25,17 @@ public:
     }
 };
 
+void updatedHieghtBalance(Node* node){
+    int lh = -1;
+    int rh = -1;
+    if(node->left != nullptr)
+        lh = node->left->height;
+    if(node->right != nullptr)
+        rh = node->right->height;
+    node->height = max(lh,rh)+1;
+    node->bal = lh - rh;
+}
+
 int idx = 0;
 Node *construct_BST(vector<int> &arr, int si, int ei)
 {
@@ -37,39 +48,24 @@ Node *construct_BST(vector<int> &arr, int si, int ei)
     node->left = construct_BST(arr, si, mid-1);
     node->right = construct_BST(arr, mid+1, ei);
 
+    updatedHieghtBalance(node);
     return node;
 }
 
-// void display(Node *node)
-// {
-//     if (node == nullptr)
-//         return;
-
-//     string str = "";
-//     str += ((node->left != nullptr) ? to_string(node->left->data) + "[" + to_string(node->left->bal)+","+to_string(node->left->height)+"]"  : ".");
-//     str += " <- " + to_string(node->data) + " -> ";
-//     str += ((node->right != nullptr) ? to_string(node->right->data) + "[" + to_string(node->left->bal)+","+to_string(node->left->height)+"]" : ".");
-//     cout << (str) << endl;
-
-//     display(node->left);
-//     display(node->right);
-// }
-
-void display1(Node *node)
+void display(Node *node)
 {
     if (node == nullptr)
         return;
 
     string str = "";
-    str += ((node->left != nullptr) ? to_string(node->left->data) : ".");
+    str += ((node->left != nullptr) ? to_string(node->left->data) + "[" + to_string(node->left->bal)+","+to_string(node->left->height)+"]"  : ".");
     str += " <- " + to_string(node->data) + " -> ";
-    str += ((node->right != nullptr) ? to_string(node->right->data) : ".");
+    str += ((node->right != nullptr) ? to_string(node->right->data) + "[" + to_string(node->left->bal)+","+to_string(node->left->height)+"]" : ".");
     cout << (str) << endl;
 
-    display1(node->left);
-    display1(node->right);
+    display(node->left);
+    display(node->right);
 }
-
 
 int max_of_tree(Node* node){
     Node* curr = node;
@@ -88,17 +84,6 @@ int min_of_tree(Node* node){
 }
 
 // avl==========================================
-
-void updatedHieghtBalance(Node* node){
-    int lh = -1;
-    int rh = -1;
-    if(node->left != nullptr)
-        lh = node->left->height;
-    if(node->right != nullptr)
-        rh = node->left->height;
-    node->height = max(lh,rh)+1;
-    node->bal = lh - rh;
-}
 
 Node* ll(Node* x){
     Node* y = x->left;
@@ -186,7 +171,7 @@ void solve(Node* root){
     for(int i = 1 ; 1<12 ; i++){
         root = addData(root,i*10);
     }
-    display1(root);
+    display(root);
 }
 
 int main(){
