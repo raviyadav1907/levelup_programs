@@ -165,7 +165,7 @@ class lec01{
     }
 
 
-    public static ArraLits<Node> rootToNodePath_02(Node root,int data){
+    public static ArrayList<Node> rootToNodePath_02(Node root,int data){
         
         if(root==null){
             return new ArrayList<>();
@@ -177,13 +177,13 @@ class lec01{
             return base;
         }
   
-        ArrayList<Node> left=root_to_node_path(root.left,data,path);
+        ArrayList<Node> left=rootToNodePath_02(root.left,data);
         if(left.size()!=0){
             left.add(root);
             return left;
         }
    
-        ArrayList<Node> right=root_to_node_path(root.right,data,path);
+        ArrayList<Node> right=rootToNodePath_02(root.right,data);
         if(right.size()!=0){
             right.add(root);
             return right;
