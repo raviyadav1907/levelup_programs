@@ -404,63 +404,301 @@ void gfg_friend_pair_prob()
 
 // leetcode 64 ================================================================================
 
-int minpathsum_rec(int row, int col, vector<vector<int>> &dp)
+int minPathSum(int sr, int sc, vector<vector<int>> &grid, vector<vector<int>> &dp)
 {
+    if (sr == grid.size() - 1 && sc == grid[0].size() - 1)
+    {
+        return dp[sr][sc] = grid[sr][sc];
+    }
+
+    if (dp[sr][sc] != 0)
+        return dp[sr][sc];
+
+    int minCost = 1e8;
+    if (sr + 1 < grid.size())
+        minCost = min(minCost, minPathSum(sr + 1, sc, grid, dp));
+    if (sc + 1 < grid[0].size())
+        minCost = min(minCost, minPathSum(sr, sc + 1, grid, dp));
+
+    return dp[sr][sc] = minCost + grid[sr][sc];
 }
 
-int minpathsum_memo(int row, int col, vector<vector<int>> &dp)
+int minPathSum_DP(int sr, int sc, vector<vector<int>> &grid, vector<vector<int>> &dp)
 {
-}
 
-int minpathsum_tabu(int row, int col, vector<vector<int>> &dp)
-{
+    for (sr = grid.size() - 1; sr >= 0; sr--)
+    {
+        for (sc = grid[0].size() - 1; sc >= 0; sc--)
+        {
+
+            if (sr == grid.size() - 1 && sc == grid[0].size() - 1)
+            {
+                dp[sr][sc] = grid[sr][sc];
+                continue;
+            }
+
+            int minCost = 1e8;
+            if (sr + 1 < grid.size())
+                minCost = min(minCost, dp[sr + 1][sc]);
+            if (sc + 1 < grid[0].size())
+                minCost = min(minCost, dp[sr][sc + 1]);
+
+            dp[sr][sc] = minCost + grid[sr][sc];
+        }
+    }
+    return dp[0][0];
 }
 
 int minPathSum(vector<vector<int>> &grid)
 {
-    int row = grid.size();
-    int col = grid[0].size();
-    //return minpathsum_rec(row, col, grid);
-    // return minpathsum_memo(row, col, grid);
-    // return minpathsum_tabu(row, col, grid);
+    vector<vector<int>> dp(grid.size(), vector<int>(grid[0].size(), 0));
+    return minPathSum(0, 0, grid, dp);
 }
 
 // gfg goldmine_problem ==========================================================
 
-int getMaxGold(vector<vector<int>> gold, int m, int n)
+int goldMin(int sr, int sc, vector<vector<int>> &grid, vector<vector<int>> &dp)
 {
-    int goldTable[m][n];
 
-    for (int col = n - 1; col >= 0; col--)
+    if (sc == grid[0].size() - 1)
     {
-        for (int row = 0; row < m; row++)
+        return dp[sr][sc] = grid[sr][sc];
+    }
+
+    if (dp[sr][sc] != 0)
+        return dp[sr][sc];
+
+    int dir[3][2] = {{-1, 1}, {0, 1}, {1, 1}};
+    int maxCoins = 0;
+    for (int d = 0; d < 3; d++)
+    {
+        int x = sr + dir[d][0];
+        int y = sc + dir[d][1];
+        if (x >= 0 && y >= 0 && x < grid.size() && y < grid[0].size())
         {
-            int right = (col == n - 1) ? 0 : goldTable[row][col + 1];
-
-            int right_up = (row == 0 || col == n - 1) ? 0 : goldTable[row - 1][col + 1];
-
-            int right_down = (row == m - 1 || col == n - 1) ? 0 : goldTable[row + 1][col + 1];
-
-            goldTable[row][col] = gold[row][col] +
-                                  max(right, max(right_up, right_down));
+            maxCoins = max(maxCoins, goldMin(x, y, grid, dp));
         }
     }
 
-    int res = goldTable[0][0];
-    for (int i = 1; i < m; i++)
-        res = max(res, goldTable[i][0]);
-    return res;
+    return dp[sr][sc] = maxCoins + grid[sr][sc];
+}
+
+int goldMin_DP(vector<vector<int>> &grid, vector<vector<int>> &dp)
+{
+
+    for (int sc = grid[0].size() - 1; sc >= 0; sc--)
+    {
+        for (int sr = grid.size() - 1; sr >= 0; sr--)
+        {
+            if (sc == grid[0].size() - 1)
+            {
+                dp[sr][sc] = grid[sr][sc];
+                continue;
+            }
+
+            int dir[3][2] = {{-1, 1}, {0, 1}, {1, 1}};
+            int maxCoins = 0;
+            for (int d = 0; d < 3; d++)
+            {
+                int x = sr + dir[d][0];
+                int y = sc + dir[d][1];
+                if (x >= 0 && y >= 0 && x < grid.size() && y < grid[0].size())
+                    maxCoins = max(maxCoins, dp[x][y]);
+            }
+
+            dp[sr][sc] = maxCoins + grid[sr][sc];
+        }
+    }
+
+    int maxCoin = 0;
+    for (int i = 0; i < grid.size(); i++)
+        maxCoin = max(maxCoin, dp[i][0]);
+    return maxCoin;
 }
 
 void gfg_gold()
 {
     vector<vector<int>> gold = {{1, 3, 1, 5},
-                    {2, 2, 4, 1},
-                    {5, 0, 2, 3},
-                    {0, 6, 1, 2}};
+                                {2, 2, 4, 1},
+                                {5, 0, 2, 3},
+                                {0, 6, 1, 2}};
     int m = 4, n = 4;
-    cout << getMaxGold(gold, m, n);
 }
+
+// https://www.geeksforgeeks.org/count-number-of-ways-to-partition-a-set-into-k-subsets/
+
+int count_of_ways(int n, int k, vector<vector<int>> &dp)
+{
+    if (n < k)
+        return 0;
+    if (n == k || k == 1)
+        return dp[k][n] = 1;
+
+    if (dp[k][n] != 0)
+        return dp[k][n];
+
+    int newGroup = count_of_ways(n - 1, k - 1, dp);
+    int ExistingGroup = count_of_ways(n - 1, k, dp) * k;
+
+    return dp[k][n] = newGroup + ExistingGroup;
+}
+
+int count_of_ways_DP(int n, int k, vector<vector<int>> &dp)
+{
+
+    int K = k, N = n;
+    for (k = 1; k <= K; k++)
+    {
+        for (n = 0; n <= N; n++)
+        {
+            if (n < k)
+                continue;
+
+            if (n == k || k == 1)
+            {
+                dp[k][n] = 1;
+                continue;
+            }
+
+            int newGroup = dp[k - 1][n - 1];
+            int ExistingGroup = dp[k][n - 1] * k;
+
+            dp[k][n] = newGroup + ExistingGroup;
+        }
+    }
+
+    return dp[K][N];
+}
+
+void count_of_ways(int n, int k)
+{
+    if (n < k)
+        return;
+
+    vector<vector<int>> dp(k + 1, vector<int>(n + 1, 0));
+    // cout << count_of_ways(n, k, dp) << endl;
+    cout << count_of_ways_DP(n, k, dp) << endl;
+
+    display2D(dp);
+}
+
+// Substring and Subsquence
+
+vector<vector<bool>> isPalindrome(string str)
+{
+    int n = str.length();
+    vector<vector<bool>> dp(n, vector<bool>(n, 0));
+    for (int gap = 0; gap < n; gap++)
+    {
+        for (int i = 0, j = gap; j < n; i++, j++)
+        {
+            if (gap == 0)
+                dp[i][j] = true;
+            else if (gap == 1 && str[i] == str[j])
+                dp[i][j] = true;
+            else
+                dp[i][j] = str[i] == str[j] && dp[i + 1][j - 1];
+        }
+    }
+    return dp;
+}
+
+string longestPlaindromSubstring(string str)
+{
+    int n = str.length();
+    vector<vector<int>> dp(n, vector<int>(n, 0));
+
+    int maxLen = 0;
+    int si = 0, ei = 0;
+    for (int gap = 0; gap < n; gap++)
+    {
+        for (int i = 0, j = gap; j < n; i++, j++)
+        {
+            if (gap == 0)
+                dp[i][j] = 1;
+            else if (gap == 1 && str[i] == str[j])
+                dp[i][j] = 2;
+            else if (str[i] == str[j] && dp[i + 1][j - 1] != 0)
+                dp[i][j] = gap + 1;
+
+            if (dp[i][j] > maxLen)
+            {
+                maxLen = dp[i][j];
+                si = i;
+                ei = j;
+            }
+        }
+    }
+    return str.substr(si, (ei - si + 1));
+}
+
+int countAllPlaindromicSubstring(string str)
+{
+    int n = str.length();
+    vector<vector<int>> dp(n, vector<int>(n, 0));
+
+    int count = 0;
+    for (int gap = 0; gap < n; gap++)
+    {
+        for (int i = 0, j = gap; j < n; i++, j++)
+        {
+            if (gap == 0)
+                dp[i][j] = 1;
+            else if (gap == 1 && str[i] == str[j])
+                dp[i][j] = 2;
+            else if (str[i] == str[j] && dp[i + 1][j - 1] != 0)
+                dp[i][j] = gap + 1;
+
+            count += dp[i][j] != 0 ? 1 : 0;
+        }
+    }
+}
+
+int longestPlaindromeSubseq_Rec(string str, int si, int ei, vector<vector<int>> &dp, vector<vector<bool>> &isPalindrome)
+{
+    if (isPalindrome[si][ei])
+        return dp[si][ei] = ei - si + 1;
+    if (dp[si][ei] != 0)
+        return dp[si][ei];
+
+    int len = 0;
+    if (str[si] == str[ei])
+        len = longestPlaindromeSubseq_Rec(str, si + 1, ei - 1, dp, isPalindrome) + 2;
+    else
+        len = max(longestPlaindromeSubseq_Rec(str, si + 1, ei, dp, isPalindrome), longestPlaindromeSubseq_Rec(str, si, ei - 1, dp, isPalindrome));
+
+    return dp[si][ei] = len;
+}
+
+int longestPlaindromeSubseq_DP(string str, int si, int ei, vector<vector<int>> &dp, vector<vector<bool>> &isPalindrome)
+{
+
+    for (int gap = 0; gap < str.length(); gap++)
+    {
+        for (si = 0, ei = gap; ei < str.length(); si++, ei++)
+        {
+
+            if (isPalindrome[si][ei])
+            {
+                dp[si][ei] = ei - si + 1;
+                continue;
+            }
+
+            int len = 0;
+            if (str[si] == str[ei])
+                len = dp[si + 1][ei - 1] + 2;
+            else
+                len = max(dp[si + 1][ei], dp[si][ei - 1]);
+            dp[si][ei] = len;
+        }
+    }
+
+    return dp[0][str.length() - 1];
+}
+
+// 5. Longest Palindromic Substring
+// 115. Distinct Subsequences
+// 516. Longest Palindromic Subsequence
 
 void set1()
 {
